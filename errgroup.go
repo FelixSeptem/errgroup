@@ -28,8 +28,6 @@ type RetryOption struct {
 	Interval time.Duration
 	// max retry times
 	MaxRetries int64
-	// has wrapped by retry
-	wrapped bool
 }
 
 type errCh struct {
@@ -100,9 +98,6 @@ func (g *group) Go(f func() error) {
 	if g.retryMode != nil {
 		fun = func() error {
 			var backoffOpt backoff.BackOff
-			defer func() {
-				g.retryMode.wrapped = true
-			}()
 			switch g.retryMode.Mode {
 			case Zero:
 				backoffOpt = NewZeroBackoff(g.retryMode.MaxRetries)
