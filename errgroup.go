@@ -93,7 +93,7 @@ func (g *group) Wait() chan error {
 
 // running unit func
 func (g *group) Go(f func() error) {
-	var fun func() error
+	fun := f
 	g.wg.Add(1)
 	if g.retryMode != nil {
 		fun = func() error {
