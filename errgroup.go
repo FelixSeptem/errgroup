@@ -100,11 +100,11 @@ func (g *group) Go(f func() error) {
 			var backoffOpt backoff.BackOff
 			switch g.retryMode.Mode {
 			case Zero:
-				backoffOpt = NewZeroBackoff(g.retryMode.MaxRetries)
+				backoffOpt = backoff.WithMaxRetries(&backoff.StopBackOff{}, uint64(g.retryMode.MaxRetries))
 			case Constant:
-				backoffOpt = NewConstantBackoff(g.retryMode.MaxRetries, g.retryMode.Interval)
+				backoffOpt = backoff.WithMaxRetries(backoff.NewConstantBackOff(g.retryMode.Interval), uint64(g.retryMode.MaxRetries))
 			case Exponential:
-				backoffOpt = NewExponentialBackoff(g.retryMode.MaxRetries)
+				backoffOpt = backoff.WithMaxRetries(backoff.NewExponentialBackOff(), uint64(g.retryMode.MaxRetries))
 			}
 			return backoff.Retry(f, backoffOpt)
 		}
